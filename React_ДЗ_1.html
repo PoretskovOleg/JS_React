@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ДЗ 1</title>
+</head>
+<body>
+  <script>
+    'use strict';
+// Задание 1
+    function loop(times = 0, callback = null) {
+      if (callback) {
+        for (let i = 0; i < times; i++) {
+          callback(i+1);
+        }
+      } else {console.log('Функция не передана')}
+    };
+
+    function createElement(n) {
+      let div = document.createElement('div');
+      document.body.appendChild(div);
+      div.innerText = `Элемент ${n}`;
+    };
+
+    loop(5, createElement);
+
+// Задание 2
+    function calculateArea(figure, param) {
+      let square;
+      let {width, height, base, radius, base1, base2} = param;
+      switch (figure) {
+        case 'triangle':
+          square = base * height / 2;
+          break;
+        case 'square':
+          square = width*width;
+          break;
+        case 'rectangle':
+          square = width * height;
+          break;
+        case 'circle':
+          square = Math.round(Math.PI * radius * radius * 100)/100;
+          break;
+        case 'trapezoid':
+          square = (base1 + base2)/2 * height;
+          break;
+      };
+      return {square, figure, param};
+    }
+
+    let s = calculateArea('trapezoid', {base1: 2, base2: 3, height:2});
+    console.log(s);
+    document.write(`Площадь фигуры ${s.figure} равна ${s.square}`);
+
+// Задание 3
+    class Human {
+      constructor(obj) {
+        let {name = 'не задано', age = 'не задано', dateOfBirth = 'не задано'} = obj;
+        this.name = name;
+        this.age = age;
+        this.dateOfBirth = dateOfBirth;
+      }
+      displayInfo() {
+        return `Имя - ${this.name}, Возраст - ${this.age}, Дата рождения - ${this.dateOfBirth}`;
+      }
+    };
+
+    class Employee extends Human {
+      constructor(obj) {
+        let {salary = 'не задано', department = 'не задано'} = obj;
+        super(obj);
+        this.salary = salary;
+        this.department = department;
+      }
+      displayInfo() {
+        return super.displayInfo() + ` Отдел - ${this.department}, Зарплата - ${this.salary}`;
+      }
+    };
+
+    class Developer extends Employee {
+      constructor(obj) {
+        super(obj);
+        this._manager = 'не назначен';
+      }
+      displayInfo() {
+        return super.displayInfo() + ` Руководитель - ${this._manager}`;
+      }
+      set manager(value) {
+        this._manager = value;
+      }
+      get manager() {
+        return `Руководитель - ${this._manager}`;
+      }
+    };
+
+    class Manager extends Employee {
+      constructor(obj) {
+        super(obj);
+        this.employee = [];
+      }
+      displayInfo() {
+        return super.displayInfo();
+      }
+      addEmployee(employee) {
+        this.employee.push(employee);
+      }
+      removeEmployee(employee) {
+        let id = employee.id;
+        this.employee = this.employee.filter( (item) => {return item.id != id});
+      }
+    };
+
+    let ivanov = {
+      id: 1,
+      name: 'Vasya',
+      age: 25,
+      dateOfBirth: '1985-05-15',
+      salary: 20000,
+      department: 'FrontEnd'
+    };
+    let petrov = {
+      id: 2,
+      name: 'Petya',
+      age: 35,
+      dateOfBirth: '1975-02-25',
+      salary: 30000,
+      department: 'FrontEnd'
+    };
+    let sidorov = {
+      id: 3,
+      name: 'Vanya',
+      age: 30,
+      dateOfBirth: '1980-06-15',
+      salary: 20000,
+      department: 'FrontEnd'
+    };
+
+    let developerIvanov = new Developer(ivanov);
+    developerIvanov.manager = 'Petya Petrov';
+    console.log(developerIvanov.displayInfo());
+
+    let managerPetrov = new Manager(petrov);
+    console.log(managerPetrov.displayInfo());
+    managerPetrov.addEmployee(ivanov);
+    managerPetrov.addEmployee(sidorov);
+    console.log(managerPetrov.employee);
+    managerPetrov.removeEmployee(ivanov);
+    console.log(managerPetrov.employee);
+
+// Задание 5
+    function addElement(elem) {
+      array.push(elem);
+    };
+
+    function sendAjax(url) {
+      let promise = new Promise(function(resolve){
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState != 4) return;
+          if (xhr.status != 200) {
+            console.log(xhr.status + ': ' + xhr.statusText);
+          } else {
+             resolve(JSON.parse(xhr.responseText));
+            }
+        }
+      });
+      return promise;
+    };
+
+    let array = [];
+    sendAjax(`https://jsonplaceholder.typicode.com/users/1`)
+      .then(addElement)
+      .then( () => console.log(array));
+      
+  </script>
+</body>
+</html>
