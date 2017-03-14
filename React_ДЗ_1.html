@@ -147,33 +147,67 @@
     managerPetrov.removeEmployee(ivanov);
     console.log(managerPetrov.employee);
 
+//Задание 4
+    function* generator(fields){
+      let ask, user = {};
+      for (let i = 0; i < fields.length; i++) {
+        ask = yield `Your ${fields[i]}?`; 
+        user[fields[i]] = ask;
+      };
+      return user;
+    };
+
+    function questioning (quest) {
+      if (quest.length == 0) { 
+        return 'Список вопросов пуст'; 
+      } else {
+          let gen = generator(quest);
+          let res = prompt(gen.next().value);
+          for (let i = 1; i < quest.length; i++) {
+            res = prompt(gen.next(res).value);
+          };
+          return gen.next(res).value;
+        }
+    };
+    
+    let questions = ['FirstName', 'LastName', 'Age', 'Hobby'];
+    console.log(questioning (questions));
+
+
 // Задание 5
     function addElement(elem) {
       array.push(elem);
     };
 
     function sendAjax(url) {
-      let promise = new Promise(function(resolve){
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.send();
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState != 4) return;
-          if (xhr.status != 200) {
-            console.log(xhr.status + ': ' + xhr.statusText);
-          } else {
-             resolve(JSON.parse(xhr.responseText));
-            }
-        }
-      });
-      return promise;
+      let promises = [];
+      for (let i = 1; i <= 10; i++) {
+        let promise = new Promise(function(resolve){
+          let xhr = new XMLHttpRequest();
+          xhr.open('GET', url+i, true);
+          xhr.send();
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState != 4) return;
+            if (xhr.status != 200) {
+              console.log(xhr.status + ': ' + xhr.statusText);
+            } else {
+               resolve(JSON.parse(xhr.responseText));
+              }
+          }
+        });
+        promises.push(promise);
+      };
+      return promises;
     };
 
     let array = [];
-    sendAjax(`https://jsonplaceholder.typicode.com/users/1`)
-      .then(addElement)
-      .then( () => console.log(array));
-      
+    let urlsrv = 'https://jsonplaceholder.typicode.com/users/';
+    for (var i = 0; i < 10; i++) {
+      sendAjax(urlsrv)[i]
+        .then(addElement)
+        .then( () => { if (array[9]) console.log(array)} );
+    };
+
   </script>
 </body>
 </html>
