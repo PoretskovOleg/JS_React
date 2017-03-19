@@ -178,7 +178,7 @@
     function addElement(elem) {
       array.push(elem);
     };
-
+    
     function sendAjax(url) {
       let promises = [];
       for (let i = 1; i <= 10; i++) {
@@ -190,8 +190,8 @@
             if (xhr.readyState != 4) return;
             if (xhr.status != 200) {
               console.log(xhr.status + ': ' + xhr.statusText);
-            } else {
-               resolve(JSON.parse(xhr.responseText));
+            } else {  
+               resolve( JSON.parse(xhr.responseText) );
               }
           }
         });
@@ -202,12 +202,11 @@
 
     let array = [];
     let urlsrv = 'https://jsonplaceholder.typicode.com/users/';
-    for (var i = 0; i < 10; i++) {
-      sendAjax(urlsrv)[i]
-        .then(addElement)
-        .then( () => { if (array[9]) console.log(array)} );
-    };
+    Promise.all(sendAjax(urlsrv))
+      .then(addElement)
+      .then( () => console.log(array) );
 
+    
   </script>
 </body>
 </html>
